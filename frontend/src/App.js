@@ -5,12 +5,9 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/shared/Layout';
 import './styles/global.css';
 
-// Auth pages
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { ForgotPassword, ResetPassword } from './pages/PasswordPages';
-
-// User pages
 import Dashboard from './pages/Dashboard';
 import { Transfer, Deposit, Withdraw } from './pages/TransactionPages';
 import Transactions from './pages/Transactions';
@@ -18,14 +15,11 @@ import Loans from './pages/Loans';
 import Profile from './pages/Profile';
 import Support from './pages/Support';
 import { Beneficiaries, Cards } from './pages/BeneficiariesAndCards';
-
-// Admin pages
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminLoans from './pages/AdminLoans';
 import AdminTickets from './pages/AdminTickets';
 import { AdminTransactions, AdminAuditLogs } from './pages/AdminTransactions';
-
 // Route guards
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
