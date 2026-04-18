@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Sidebar from './Sidebar';
-import { Bell, Search, Menu, X, CheckCheck } from 'lucide-react';
+import { Bell, Search, Menu, CheckCheck } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import './Layout.css';
 
@@ -20,7 +20,11 @@ export default function Layout() {
   }, [fetchNotifications]);
 
   useEffect(() => {
-    const handler = (e) => { if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifications(false); };
+    const handler = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotifications(false);
+      }
+    };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
@@ -29,29 +33,38 @@ export default function Layout() {
 
   return (
     <div className="layout">
-      {mobileSidebar && <div className="mobile-overlay" onClick={() => setMobileSidebar(false)}/>}
+      {mobileSidebar && (
+        <div className="mobile-overlay" onClick={() => setMobileSidebar(false)} />
+      )}
       <div className={`sidebar-wrapper ${mobileSidebar ? 'mobile-open' : ''}`}>
-        <Sidebar/>
+        <Sidebar />
       </div>
 
       <div className="layout-main">
         <header className="topbar">
           <button className="mobile-menu-btn" onClick={() => setMobileSidebar(true)}>
-            <Menu size={20}/>
+            <Menu size={20} />
           </button>
 
           <div className="topbar-center">
             <div className="topbar-search">
-              <Search size={16} className="search-icon"/>
-              <input type="text" placeholder="Search transactions, accounts..." readOnly onClick={() => navigate('/transactions')}/>
+              <Search size={16} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search transactions, accounts..."
+                readOnly
+                onClick={() => navigate('/transactions')}
+              />
             </div>
           </div>
 
           <div className="topbar-right">
             <div className="notif-wrapper" ref={notifRef}>
               <button className="notif-btn" onClick={() => setShowNotifications(!showNotifications)}>
-                <Bell size={20}/>
-                {unreadCount > 0 && <span className="notif-count">{unreadCount > 9 ? '9+' : unreadCount}</span>}
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="notif-count">{unreadCount > 9 ? '9+' : unreadCount}</span>
+                )}
               </button>
 
               {showNotifications && (
@@ -60,14 +73,14 @@ export default function Layout() {
                     <h3>Notifications</h3>
                     {unreadCount > 0 && (
                       <button onClick={markAllRead} className="mark-all-btn">
-                        <CheckCheck size={14}/> Mark all read
+                        <CheckCheck size={14} /> Mark all read
                       </button>
                     )}
                   </div>
                   <div className="notif-list">
                     {notifications.length === 0 ? (
                       <div className="notif-empty">
-                        <Bell size={32}/><p>No notifications</p>
+                        <Bell size={32} /><p>No notifications</p>
                       </div>
                     ) : notifications.slice(0, 15).map(n => (
                       <div
@@ -79,9 +92,11 @@ export default function Layout() {
                         <div className="notif-content">
                           <p className="notif-title">{n.title}</p>
                           <p className="notif-msg">{n.message}</p>
-                          <p className="notif-time">{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</p>
+                          <p className="notif-time">
+                            {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
+                          </p>
                         </div>
-                        {!n.is_read && <span className="notif-dot"/>}
+                        {!n.is_read && <span className="notif-dot" />}
                       </div>
                     ))}
                   </div>
@@ -91,21 +106,21 @@ export default function Layout() {
 
             <div className="topbar-user" onClick={() => navigate('/profile')}>
               <div className="topbar-avatar">
-                {user?.profileImage
-                  ? <img src={`http://localhost:5000${user.profileImage}`} alt=""/>
-                  : <span>{user?.firstName?.[0]}{user?.lastName?.[0]}</span>
+                {user && user.profileImage
+                  ? <img src={`http://localhost:5000${user.profileImage}`} alt="" />
+                  : <span>{user && user.firstName && user.firstName[0]}{user && user.lastName && user.lastName[0]}</span>
                 }
               </div>
               <div className="topbar-user-info hide-mobile">
-                <p className="topbar-name">{user?.firstName} {user?.lastName}</p>
-                <p className="topbar-role">{user?.role === 'admin' ? 'Administrator' : 'Account Holder'}</p>
+                <p className="topbar-name">{user && user.firstName} {user && user.lastName}</p>
+                <p className="topbar-role">{user && user.role === 'admin' ? 'Administrator' : 'Account Holder'}</p>
               </div>
             </div>
           </div>
         </header>
 
         <main className="layout-content">
-          <Outlet/>
+          <Outlet />
         </main>
       </div>
     </div>

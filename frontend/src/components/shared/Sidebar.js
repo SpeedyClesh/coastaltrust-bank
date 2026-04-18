@@ -3,9 +3,9 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, ArrowLeftRight, TrendingDown, TrendingUp,
-  CreditCard, FileText, User, Bell, HelpCircle, LogOut,
+  CreditCard, BookOpen, User, HelpCircle, LogOut,
   ChevronLeft, ChevronRight, Shield, Users, BarChart3,
-  Settings, Inbox, BookOpen, Activity
+  Settings, Inbox, Activity
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -36,7 +36,7 @@ export default function Sidebar() {
   const { user, logout, unreadCount } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
-  const navItems = user?.role === 'admin' ? adminNavItems : userNavItems;
+  const navItems = user && user.role === 'admin' ? adminNavItems : userNavItems;
 
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
@@ -51,7 +51,7 @@ export default function Sidebar() {
           )}
         </div>
         <button className="collapse-btn" onClick={() => setCollapsed(!collapsed)}>
-          {collapsed ? <ChevronRight size={16}/> : <ChevronLeft size={16}/>}
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>
 
@@ -59,8 +59,8 @@ export default function Sidebar() {
         <div className="sidebar-user">
           <div className="user-avatar">
             {user.profileImage
-              ? <img src={`http://localhost:5000${user.profileImage}`} alt="avatar"/>
-              : <span>{user.firstName?.[0]}{user.lastName?.[0]}</span>
+              ? <img src={`http://localhost:5000${user.profileImage}`} alt="avatar" />
+              : <span>{user.firstName && user.firstName[0]}{user.lastName && user.lastName[0]}</span>
             }
           </div>
           <div className="user-info">
@@ -72,9 +72,13 @@ export default function Sidebar() {
 
       <nav className="sidebar-nav">
         {navItems.map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} className={({isActive}) => `nav-item ${isActive ? 'active' : ''}`}>
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          >
             <div className="nav-icon">
-              <Icon size={18}/>
+              <Icon size={18} />
               {label === 'Notifications' && unreadCount > 0 && (
                 <span className="nav-badge">{unreadCount}</span>
               )}
@@ -87,12 +91,15 @@ export default function Sidebar() {
       <div className="sidebar-footer">
         {!collapsed && user && (
           <div className="account-status">
-            <span className={`status-dot ${user.status === 'active' ? 'active' : 'pending'}`}/>
+            <span className={`status-dot ${user.status === 'active' ? 'active' : 'pending'}`} />
             <span>{user.status === 'active' ? 'Account Active' : 'Pending Verification'}</span>
           </div>
         )}
-        <button className="nav-item logout-btn" onClick={() => { logout(); navigate('/login'); }}>
-          <div className="nav-icon"><LogOut size={18}/></div>
+        <button
+          className="nav-item logout-btn"
+          onClick={() => { logout(); navigate('/login'); }}
+        >
+          <div className="nav-icon"><LogOut size={18} /></div>
           {!collapsed && <span className="nav-label">Logout</span>}
         </button>
       </div>
