@@ -1,0 +1,9 @@
+/* TransactionHistory.css */
+.transactions-page { max-width: 1100px; }
+.filters-bar {}
+.txn-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.txn-dot.success { background: var(--success); }
+.txn-dot.error { background: var(--error); }
+.txn-dot.warning { background: var(--warning); }
+.txn-dot.info { background: var(--info); }
+.txn-dot.gray { background: var(--text-light); }
