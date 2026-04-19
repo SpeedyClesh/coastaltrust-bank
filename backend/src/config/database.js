@@ -39,8 +39,8 @@ function initializeDatabase() {
       reset_password_expires TEXT,
       two_factor_enabled INTEGER DEFAULT 0,
       last_login TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
+      created_at TEXT DEFAULT (CURRENT_TIMESTAMP),
+      updated_at TEXT DEFAULT (CURRENT_TIMESTAMP)
     );
 
     -- Accounts Table
@@ -55,8 +55,8 @@ function initializeDatabase() {
       currency TEXT DEFAULT 'USD',
       status TEXT DEFAULT 'active',
       interest_rate REAL DEFAULT 0.045,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now')),
+      created_at TEXT DEFAULT (CURRENT_TIMESTAMP),
+      updated_at TEXT DEFAULT (CURRENT_TIMESTAMP),
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
@@ -79,8 +79,8 @@ function initializeDatabase() {
       recipient_bank TEXT,
       recipient_routing TEXT,
       metadata TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now')),
+      created_at TEXT DEFAULT (CURRENT_TIMESTAMP),
+      updated_at TEXT DEFAULT (CURRENT_TIMESTAMP),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
@@ -100,7 +100,7 @@ function initializeDatabase() {
       outstanding_balance REAL,
       purpose TEXT,
       status TEXT DEFAULT 'pending',
-      applied_at TEXT DEFAULT (datetime('now')),
+      applied_at TEXT DEFAULT (CURRENT_TIMESTAMP),
       approved_at TEXT,
       due_date TEXT,
       next_payment_date TEXT,
@@ -115,7 +115,7 @@ function initializeDatabase() {
       loan_id TEXT NOT NULL,
       user_id TEXT NOT NULL,
       amount REAL NOT NULL,
-      payment_date TEXT DEFAULT (datetime('now')),
+      payment_date TEXT DEFAULT (CURRENT_TIMESTAMP),
       status TEXT DEFAULT 'completed',
       transaction_ref TEXT,
       FOREIGN KEY (loan_id) REFERENCES loans(id)
@@ -135,7 +135,7 @@ function initializeDatabase() {
       cvv_hash TEXT NOT NULL,
       daily_limit REAL DEFAULT 2500.00,
       status TEXT DEFAULT 'active',
-      created_at TEXT DEFAULT (datetime('now')),
+      created_at TEXT DEFAULT (CURRENT_TIMESTAMP),
       FOREIGN KEY (user_id) REFERENCES users(id),
       FOREIGN KEY (account_id) REFERENCES accounts(id)
     );
@@ -152,7 +152,7 @@ function initializeDatabase() {
       phone TEXT,
       is_internal INTEGER DEFAULT 0,
       nickname TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
+      created_at TEXT DEFAULT (CURRENT_TIMESTAMP),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
@@ -165,7 +165,7 @@ function initializeDatabase() {
       type TEXT DEFAULT 'info',
       is_read INTEGER DEFAULT 0,
       action_url TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
+      created_at TEXT DEFAULT (CURRENT_TIMESTAMP),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
@@ -183,8 +183,8 @@ function initializeDatabase() {
       status TEXT DEFAULT 'open',
       assigned_to TEXT,
       resolution TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now')),
+      created_at TEXT DEFAULT (CURRENT_TIMESTAMP),
+      updated_at TEXT DEFAULT (CURRENT_TIMESTAMP),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
@@ -195,7 +195,7 @@ function initializeDatabase() {
       sender_id TEXT,
       sender_type TEXT DEFAULT 'user',
       message TEXT NOT NULL,
-      created_at TEXT DEFAULT (datetime('now')),
+      created_at TEXT DEFAULT (CURRENT_TIMESTAMP),
       FOREIGN KEY (ticket_id) REFERENCES support_tickets(id)
     );
 
@@ -210,7 +210,7 @@ function initializeDatabase() {
       details TEXT,
       ip_address TEXT,
       user_agent TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
+      created_at TEXT DEFAULT (CURRENT_TIMESTAMP)
     );
 
     -- Exchange Rates (mock)
@@ -219,7 +219,7 @@ function initializeDatabase() {
       from_currency TEXT NOT NULL,
       to_currency TEXT NOT NULL,
       rate REAL NOT NULL,
-      updated_at TEXT DEFAULT (datetime('now'))
+      updated_at TEXT DEFAULT (CURRENT_TIMESTAMP)
     );
   `);
 

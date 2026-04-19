@@ -88,8 +88,8 @@ exports.updateUserStatus = async (req, res) => {
     const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    if (status) db.prepare("UPDATE users SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, user.id);
-    if (kycStatus) db.prepare("UPDATE users SET kyc_status = ?, updated_at = datetime('now') WHERE id = ?").run(kycStatus, user.id);
+    if (status) db.prepare("UPDATE users SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(status, user.id);
+    if (kycStatus) db.prepare("UPDATE users SET kyc_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(kycStatus, user.id);
 
     if (status === 'active') {
       createNotification(user.id, 'Account Approved', 'Your CoastalTrust Bank account has been verified and activated!', 'success');
@@ -117,7 +117,7 @@ exports.adminDeposit = async (req, res) => {
 
     const ref = generateTransactionRef();
 
-    db.prepare('UPDATE accounts SET balance = balance + ?, available_balance = available_balance + ?, updated_at = datetime("now") WHERE id = ?').run(parseFloat(amount), parseFloat(amount), accountId);
+    db.prepare('UPDATE accounts SET balance = balance + ?, available_balance = available_balance + ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(parseFloat(amount), parseFloat(amount), accountId);
 
     db.prepare(`INSERT INTO transactions (transaction_ref, to_account_id, user_id, type, amount, description, status, category) VALUES (?, ?, ?, 'deposit', ?, ?, 'completed', 'admin_deposit')`)
       .run(ref, accountId, userId, parseFloat(amount), description || 'Admin Credit');
@@ -165,7 +165,7 @@ exports.updateLoan = async (req, res) => {
       const nextPayment = new Date();
       nextPayment.setMonth(nextPayment.getMonth() + 1);
 
-      db.prepare(`UPDATE loans SET status = 'active', approved_amount = ?, outstanding_balance = ?, approved_at = datetime('now'), due_date = ?, next_payment_date = ?, notes = ? WHERE id = ?`)
+      db.prepare(`UPDATE loans SET status = 'active', approved_amount = ?, outstanding_balance = ?, approved_at = CURRENT_TIMESTAMP, due_date = ?, next_payment_date = ?, notes = ? WHERE id = ?`)
         .run(amount, amount, dueDate.toISOString(), nextPayment.toISOString(), notes, loan.id);
 
       // Credit funds to user's checking account
@@ -227,7 +227,7 @@ exports.updateTicket = async (req, res) => {
     const ticket = db.prepare('SELECT * FROM support_tickets WHERE id = ?').get(req.params.id);
     if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
 
-    db.prepare("UPDATE support_tickets SET status = ?, resolution = ?, updated_at = datetime('now') WHERE id = ?").run(status || ticket.status, resolution || ticket.resolution, ticket.id);
+    db.prepare("UPDATE support_tickets SET status = ?, resolution = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(status || ticket.status, resolution || ticket.resolution, ticket.id);
 
     if (replyMessage) {
       db.prepare('INSERT INTO support_messages (ticket_id, sender_id, sender_type, message) VALUES (?, ?, "admin", ?)').run(ticket.id, req.user.id, replyMessage);

@@ -66,7 +66,7 @@ exports.replyToTicket = async (req, res) => {
     if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
 
     db.prepare('INSERT INTO support_messages (ticket_id, sender_id, sender_type, message) VALUES (?, ?, "user", ?)').run(ticket.id, req.user.id, message);
-    db.prepare("UPDATE support_tickets SET updated_at = datetime('now') WHERE id = ?").run(ticket.id);
+    db.prepare("UPDATE support_tickets SET updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(ticket.id);
 
     res.json({ message: 'Reply sent' });
   } catch (error) {

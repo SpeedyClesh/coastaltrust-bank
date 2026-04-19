@@ -77,7 +77,7 @@ exports.login = async (req, res) => {
 
     const { accessToken, refreshToken } = generateTokens(user.id, user.role);
 
-    db.prepare('UPDATE users SET last_login = datetime("now") WHERE id = ?').run(user.id);
+    db.prepare('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?').run(user.id);
     createAuditLog(user.id, 'USER_LOGIN', 'users', user.id, { email }, req);
 
     const accounts = db.prepare('SELECT * FROM accounts WHERE user_id = ?').all(user.id);
@@ -139,7 +139,7 @@ exports.updateProfile = async (req, res) => {
     const db = getDb();
     const { firstName, lastName, phone, address, city, state, zipCode, country } = req.body;
     db.prepare(`
-      UPDATE users SET first_name=?, last_name=?, phone=?, address=?, city=?, state=?, zip_code=?, country=?, updated_at=datetime('now')
+      UPDATE users SET first_name=?, last_name=?, phone=?, address=?, city=?, state=?, zip_code=?, country=?, updated_at=CURRENT_TIMESTAMP
       WHERE id=?
     `).run(firstName, lastName, phone, address, city, state, zipCode, country, req.user.id);
     createAuditLog(req.user.id, 'PROFILE_UPDATE', 'users', req.user.id, {}, req);
@@ -157,7 +157,7 @@ exports.changePassword = async (req, res) => {
     const isValid = await bcrypt.compare(currentPassword, user.password_hash);
     if (!isValid) return res.status(400).json({ message: 'Current password is incorrect' });
     const newHash = await bcrypt.hash(newPassword, 12);
-    db.prepare('UPDATE users SET password_hash = ?, updated_at = datetime("now") WHERE id = ?').run(newHash, req.user.id);
+    db.prepare('UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(newHash, req.user.id);
     createAuditLog(req.user.id, 'PASSWORD_CHANGE', 'users', req.user.id, {}, req);
     res.json({ message: 'Password changed successfully' });
   } catch (error) {
@@ -215,7 +215,7 @@ exports.uploadIdDocument = async (req, res) => {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
     const db = getDb();
     const docPath = `/uploads/${req.file.filename}`;
-    db.prepare('UPDATE users SET id_document = ?, kyc_status = "submitted", updated_at = datetime("now") WHERE id = ?').run(docPath, req.user.id);
+    db.prepare('UPDATE users SET id_document = ?, kyc_status = "submitted", updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(docPath, req.user.id);
     createNotification(req.user.id, 'KYC Document Submitted', 'Your ID document has been submitted for review.', 'info');
     res.json({ message: 'ID document submitted for review', docPath });
   } catch (error) {

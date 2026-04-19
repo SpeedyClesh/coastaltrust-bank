@@ -85,7 +85,7 @@ exports.makeLoanPayment = async (req, res) => {
       const newStatus = newBalance <= 0 ? 'paid_off' : 'active';
       const totalPaid = loan.amount_paid + paymentAmount;
 
-      db.prepare('UPDATE loans SET outstanding_balance = ?, amount_paid = ?, status = ?, updated_at = datetime("now") WHERE id = ?')
+      db.prepare('UPDATE loans SET outstanding_balance = ?, amount_paid = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
         .run(newBalance, totalPaid, newStatus, loan.id);
 
       db.prepare('INSERT INTO loan_payments (loan_id, user_id, amount, transaction_ref) VALUES (?, ?, ?, ?)').run(loan.id, req.user.id, paymentAmount, ref);

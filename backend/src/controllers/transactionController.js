@@ -57,11 +57,11 @@ exports.transfer = async (req, res) => {
 
     // Execute transfer
     const transfer = db.transaction(() => {
-      db.prepare('UPDATE accounts SET balance = balance - ?, available_balance = available_balance - ?, updated_at = datetime("now") WHERE id = ?')
+      db.prepare('UPDATE accounts SET balance = balance - ?, available_balance = available_balance - ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
         .run(totalDeduction, totalDeduction, fromAccountId);
 
       if (toAccount) {
-        db.prepare('UPDATE accounts SET balance = balance + ?, available_balance = available_balance + ?, updated_at = datetime("now") WHERE id = ?')
+        db.prepare('UPDATE accounts SET balance = balance + ?, available_balance = available_balance + ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
           .run(parseFloat(amount), parseFloat(amount), toAccount.id);
       }
 
@@ -112,7 +112,7 @@ exports.deposit = async (req, res) => {
 
     const ref = generateTransactionRef();
 
-    db.prepare('UPDATE accounts SET balance = balance + ?, available_balance = available_balance + ?, updated_at = datetime("now") WHERE id = ?')
+    db.prepare('UPDATE accounts SET balance = balance + ?, available_balance = available_balance + ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
       .run(parseFloat(amount), parseFloat(amount), accountId);
 
     db.prepare(`
@@ -146,7 +146,7 @@ exports.withdrawal = async (req, res) => {
 
     const ref = generateTransactionRef();
 
-    db.prepare('UPDATE accounts SET balance = balance - ?, available_balance = available_balance - ?, updated_at = datetime("now") WHERE id = ?')
+    db.prepare('UPDATE accounts SET balance = balance - ?, available_balance = available_balance - ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
       .run(parseFloat(amount), parseFloat(amount), accountId);
 
     db.prepare(`
